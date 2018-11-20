@@ -12,11 +12,7 @@ case "$1" in
 	| sed -e 's/-o smtpd_recipient_restrictions=[^ ]*//' -e 's/-o smtpd_data_restrictions=[^ ]*//' )" || true
     postconf -e -F "$(postconf -F |grep ^smtps/inet/command \
 	| sed -e 's/-o smtpd_recipient_restrictions=[^ ]*//' -e 's/-o smtpd_data_restrictions=[^ ]*//' )" || true
-    service postfix reload
-    ;;
-  purge)
-    mysql --defaults-file=/etc/alternc/my.cnf -e "DROP TABLE saslstats"
-    supervisorctl update
+    service postfix restart
     ;;
 esac
 

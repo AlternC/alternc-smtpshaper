@@ -1,0 +1,9 @@
+#!/bin/bash -e
+
+case "$1" in
+  purge)
+    mysql --defaults-file=/etc/alternc/my.cnf -e "DROP TABLE saslstats"
+    supervisorctl update
+    ;;
+esac
+

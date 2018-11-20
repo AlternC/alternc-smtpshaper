@@ -17,7 +17,7 @@ case "$1" in
     postconf -e -F "$(postconf -F |grep ^smtps/inet/command \
 	| sed -e 's/-o smtpd_recipient_restrictions=[^ ]*//' -e 's/-o smtpd_data_restrictions=[^ ]*//' \
 	| sed -e 's/$/ -o smtpd_recipient_restrictions=$smtpshaper_smtpd_recipient_restrictions -o smtpd_data_restrictions=$smtpshaper_smtpd_data_restrictions/')" || true
-    service postfix reload
+    service postfix restart
     supervisorctl update
     ;;
 esac
