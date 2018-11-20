@@ -2,6 +2,7 @@ Source: alternc-smtpshaper
 Section: admin
 Priority: optional
 Maintainer: Benjamin Sonntag <benjamin@sonntag.fr>
+Build-Depends: debhelper (>= 9)
 Standards-Version: 3.9.8
 
 Package: alternc-smtpshaper
@@ -9,15 +10,17 @@ Architecture: all
 Pre-depends: alternc (>= 3.1.8) 
 Depends: bash (>= 4)
  	 , supervisor
-         , php-cli | php5.6-cli
+         , php5.6-cli | php-cli
+         , ${misc:Depends}
 Recommends: postfix
 Description: Hosting management suite, SMTP limiter
  AlternC is a mutualized hosting software manager for Linux.
  It allows you to manage your websites, domains, ftp, emails, aliases,
  web statistics, mailing-lists, jabber accounts, etc.
  .
- This module for AlternC limits the number of emails / IP that a single account
- can send thtough the SMTP server. if an account goes above the limit, it's disabled,
+ This module for AlternC limits the number of emails / IP
+ that a single account can send thtough the SMTP server.
+ if an account goes above the limit, it's disabled,
  an email is sent to the admin of the account.
  .
  More information at http://www.alternc.com/
