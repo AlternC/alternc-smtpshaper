@@ -1,0 +1,22 @@
+#!/bin/bash -e
+
+case "$1" in
+  remove)
+    echo "Setting up postfix to remove smtpshaper using postconf"
+    postconf -X "smtpshaper_smtpd_data_restrictions"
+    postconf -X "smtpshaper_smtpd_recipient_restrictions"
+
+    # replace settting in master.cf too :
+    echo "Replacing master.cf for submission and smtps. if you have an error below, please configure postfix manually"
+    postconf -e -F "$(postconf -F |grep ^submission/inet/command \
+	| sed -e 's/-o smtpd_recipient_restrictions=[^ ]*//' -e 's/-o smtpd_data_restrictions=[^ ]*//' )" || true
+    postconf -e -F "$(postconf -F |grep ^smtps/inet/command \
+	| sed -e 's/-o smtpd_recipient_restrictions=[^ ]*//' -e 's/-o smtpd_data_restrictions=[^ ]*//' )" || true
+    service postfix reload
+    ;;
+  purge)
+    mysql --defaults-file=/etc/alternc/my.cnf -e "DROP TABLE saslstats"
+    supervisorctl update
+    ;;
+esac
+

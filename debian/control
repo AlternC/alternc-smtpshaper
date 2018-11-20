@@ -10,7 +10,7 @@ Architecture: all
 Pre-depends: alternc (>= 3.1.8) 
 Depends: bash (>= 4)
  	 , supervisor
-         , php5.6-cli | php-cli
+         , php5-cli | php-cli
          , ${misc:Depends}
 Recommends: postfix
 Description: Hosting management suite, SMTP limiter
