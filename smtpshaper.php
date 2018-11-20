@@ -34,7 +34,11 @@ $conf=array(
 // conf file overwrite *every* values at once (not only the one stated in the conf file...) 
 if (file_exists($conffile)) {
     $testconf=json_decode(file_get_contents($conffile),true);
-    $conf=array_merge($conf,$testconf);
+    if (is_array($testconf)) {
+        $conf=array_merge($conf,$testconf);
+    } else {
+        echo date("Y-m-d H:i:s")." file $conffile has errors, ignored.\n";
+    }
 }
 
 echo date("Y-m-d H:i:s")." starting smtpshaper daemon\n";
@@ -51,7 +55,9 @@ $attrkeep=array(
 );
 
 socket_set_option($main_sock, SOL_SOCKET, SO_REUSEADDR, 1);
-socket_bind($main_sock, $conf["listen"], $conf["port"]);
+if (!socket_bind($main_sock, $conf["listen"], $conf["port"])) {
+    echo date("Y-m-d H:i:s")." can't bind on socket, please check\n";
+}
 socket_listen($main_sock);
 
 // create a list of all the clients that will be connected to us..
