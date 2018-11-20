@@ -1,0 +1,9 @@
+#!/bin/bash -e
+
+case "$1" in
+  configure)
+    echo "Installing smtpshaper sql DB"
+    mysql --defaults-file=/etc/alternc/my.cnf -e < /etc/alternc/smtpshaper.sql
+    ;;
+esac
+

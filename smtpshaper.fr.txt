@@ -1,0 +1,13 @@
+mail bloqué sur %%HOSTNAME%%
+Bonjour,
+
+Suite à de trop nombreux envois, l'adresse email %%EMAIL%%
+a déclenché son bloquage automatique.
+Votre serveur sous AlternC a donc désactivé temporairement ce mail pour la raison suivante:
+%%MESSAGE%%
+
+Merci de prévenir votre utilisateur, et changez son mot de passe immédiatement : il a probablement fuité.
+
+Vous remerciant de votre compréhension,
+Votre serveur mail.
+

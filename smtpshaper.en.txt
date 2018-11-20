@@ -1,0 +1,13 @@
+mail account locked on %%HOSTNAME%%
+Hi,
+
+The email address %%EMAIL%% has sent a lot of emails recently
+which triggered the automatic blocking of this account.
+
+Your AlternC server robot temporarily disabled this email for the following reason:
+%%MESSAGE%%
+
+Please tell your user, and change his/her password immediately: it has been leaked.
+
+Thanks for your understanding,
+Your mail server.
