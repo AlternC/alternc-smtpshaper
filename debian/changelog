@@ -1,3 +1,9 @@
+alternc-smtpshaper (1.0~rc2) stable; urgency=low
+
+  * fixing and testing, mail sent OK, disabled account OK
+
+ -- Benjamin Sonntag <benjamin@sonntag.fr>  Tue, 20 Nov 2018 18:31:00 +0200
+
 alternc-smtpshaper (1.0~rc1) stable; urgency=low
 
   * AlternC-smtpshaper for AlternC 3.x
