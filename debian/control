@@ -8,6 +8,7 @@ Package: alternc-smtpshaper
 Architecture: all
 Pre-depends: alternc (>= 3.1.8) 
 Depends: bash (>= 4)
+ 	 , supervisor
          , php-cli | php5.6-cli
 Recommends: postfix
 Description: Hosting management suite, SMTP limiter

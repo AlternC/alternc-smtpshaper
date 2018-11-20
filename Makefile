@@ -24,3 +24,5 @@
 install: 
 	install -o root -g root -m 755 smtpshaper.php $(DESTDIR)/usr/lib/alternc
 	install -o root -g root -m 644 smtpshaper.conf smtpshaper.en.txt smtpshaper.fr.txt smtpshaper.sql $(DESTDIR)/etc/alternc
+	install -o root -g root -m 644 smtpshaper.supervisor.conf $(DESTDIR)/etc/supervisor/conf.d/smtpshaper.conf
+

@@ -4,6 +4,19 @@ case "$1" in
   configure)
     echo "Installing smtpshaper sql DB"
     mysql --defaults-file=/etc/alternc/my.cnf -e < /etc/alternc/smtpshaper.sql
+    echo "Setting up postfix for smtpshaper using postconf"
+    postconf -e \
+	     "smtpshaper_smtpd_data_restrictions = check_policy_service inet:127.0.0.1:10023" \
+	     "smtpshaper_smtpd_recipient_restrictions = permit_mynetworks, check_policy_service inet:127.0.0.1:10023, permit_sasl_authenticated, reject"
+
+    # replace settting in master.cf too :
+    echo "Replacing master.cf for submission and smtps. if you have an error below, please configure postfix manually"
+    postconf -e -F "$(postconf -F |grep ^submission/inet/command \
+	| sed -e 's/-o smtpd_recipient_restrictions=[^ ]*//' -e 's/-o smtpd_data_restrictions=[^ ]*//' \
+	| sed -e 's/$/ -o smtpd_recipient_restrictions=$smtpshaper_smtpd_recipient_restrictions -o smtpd_data_restrictions=$smtpshaper_smtpd_data_restrictions/')" || true
+    postconf -e -F "$(postconf -F |grep ^smtps/inet/command \
+	| sed -e 's/-o smtpd_recipient_restrictions=[^ ]*//' -e 's/-o smtpd_data_restrictions=[^ ]*//' \
+	| sed -e 's/$/ -o smtpd_recipient_restrictions=$smtpshaper_smtpd_recipient_restrictions -o smtpd_data_restrictions=$smtpshaper_smtpd_data_restrictions/')" || true
     ;;
 esac
 
