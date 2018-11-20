@@ -45,7 +45,7 @@ echo date("Y-m-d H:i:s")." starting smtpshaper daemon\n";
 $main_sock = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 
 // we store a local memory of the blocked accounts in here:
-$blocklist=array();
+$blocklist=array(); // cache for 10 min only => after that SASLAUTHD MUST HAVE reloaded its cache and we are denied anyway
 // we also cache which email address has which ID in the DB:
 $addrcache=array();
 // we only keep those attributes from postfix :
@@ -172,13 +172,19 @@ function sasl_stats($attrs) {
  */
 function is_it_blocked($addrid,$ip) {
     global $blocklist,$shape_rcpts,$conf;
+
+    $expire=time()-600;
+    foreach($blocklist as $addr=>$time) {
+        if ($time<$expire) unset($blocklist[$addr]);
+    }
+    
     if (isset($blocklist[$addrid])) return true;
 
     foreach($conf["shape_rcpts"] as $time => $counter)  {
         $compare = mysqli_fetch_array(mq("SELECT SUM(rcptcount) AS counter FROM saslstat WHERE address_id=".intval($addrid)." AND cdate>DATE_SUB(NOW(), INTERVAL $time SECOND);"));
         if ($compare["counter"] >= $counter) {
-            block($addrid,"Ce compte a envoyé des mails à $compare addresses en ".intval($time/3600)."h.");
-            $blocklist[$addrid]=true;
+            block($addrid,"Ce compte a envoyé des mails à ".$compare["counter"]." addresses en ".intval($time/3600)."h.");
+            $blocklist[$addrid]=time();
             return true;
         }
     } // for each shaping on RCPTcount
@@ -186,8 +192,8 @@ function is_it_blocked($addrid,$ip) {
     foreach($conf["shape_ip"] as $time => $counter)  {
         $compare = mysqli_fetch_array(mq("SELECT COUNT(DISTINCT ip) AS counter FROM saslstat WHERE address_id=".intval($addrid)." AND cdate>DATE_SUB(NOW(), INTERVAL $time SECOND);"));
         if ($compare["counter"] >= $counter) {
-            block($addrid,"Ce compte a envoyé des mails depuis $compare adresses IP différentes en ".intval($time/3600)."h.");
-            $blocklist[$addrid]=true;
+            block($addrid,"Ce compte a envoyé des mails depuis ".$compare["counter"]." adresses IP différentes en ".intval($time/3600)."h.");
+            $blocklist[$addrid]=time();
             return true;
         }
     } // for each shaping on IP
@@ -203,14 +209,15 @@ function is_it_blocked($addrid,$ip) {
 function block($addrid,$msg) {
     global $addrcache,$conf;
     $email = array_search($addrid,$addrcache);
+    echo date("Y-m-d H:i:s")." EMAIL $email BLOCKED with msg : $msg\n";
     mq("UPDATE address SET enabled=0 WHERE id=".intval($addrid).";");
     $fields=array(
         "HOSTNAME"=>gethostname(),
         "EMAIL" => $email,
         "MESSAGE" => $msg
     );
-    $to = mysqli_fetch_array(mq("SELECT m.mail FROM membres m, domaines d, address a WHERE a.id=".intval($addrid)." AND a.domain_id=d.id AND d.compte=m.uid;"));
-    mail_tpl($conf["mail_sender"],$to,$conf["mail_file"],$fields);
+    $to = mysqli_fetch_array(mq("SELECT m.mail AS recipient FROM membres m, domaines d, address a WHERE a.id=".intval($addrid)." AND a.domain_id=d.id AND d.compte=m.uid;"));
+    mail_tpl($conf["mail_sender"],$to["recipient"],$conf["mail_file"],$fields);
     foreach($conf["mail_bcc"] as $to) {
         mail_tpl($conf["mail_sender"],$to,$conf["mail_file"],$fields);
     }
@@ -284,7 +291,7 @@ function mq_connect() {
  * by doing a substitution of %%KEY%% to VALUES in the $fields hash
  */
 function mail_tpl($from, $to, $mailfile, $fields) {
-    $f=fopen($mailfile);
+    $f=fopen($mailfile,"rb");
     $subject=trim(fgets($f,1024));
     $text="";
     while($s=fgets($f,1024)) $text.=$s;
