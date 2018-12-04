@@ -1,5 +1,13 @@
 alternc-smtpshaper (1.0~rc2) stable; urgency=low
 
+  * adding content-type charset in email (utf-8)
+  * changing password instead of disabling email completely
+  * whitelist is now a specific one-email-per-line configuration file. (also, auto-reloaded ;) ) 
+
+ -- Benjamin Sonntag <benjamin@sonntag.fr>  Tue, 20 Nov 2018 18:31:00 +0200
+
+alternc-smtpshaper (1.0~rc2) stable; urgency=low
+
   * fixing and testing, mail sent OK, disabled account OK
 
  -- Benjamin Sonntag <benjamin@sonntag.fr>  Tue, 20 Nov 2018 18:31:00 +0200

@@ -10,6 +10,7 @@
 // Set the conf values below to new values in this configuration file:
 // (json-encoded)
 $conffile="/etc/alternc/smtpshaper.conf";
+$whitelistfile="/etc/alternc/smtpshaper.whitelist.conf";
 
 // default values : 
 $conf=array(
@@ -53,6 +54,8 @@ $attrkeep=array(
     "protocol_state", "request", "client_address", "sasl_username",
     "recipient_count", 
 );
+// auto reload based on filemtime if exists.
+$whitelist=array();
 
 socket_set_option($main_sock, SOL_SOCKET, SO_REUSEADDR, 1);
 if (!socket_bind($main_sock, $conf["listen"], $conf["port"])) {
@@ -134,7 +137,7 @@ while (true) {
  * return the action that we should send back to postfix
  */
 function sasl_stats($attrs) {
-    global $addrcache,$conf;
+    global $addrcache,$conf,$whitelist;
     
     if ($attrs["request"]!="smtpd_access_policy") {
         return "DUNNO";
@@ -154,13 +157,46 @@ function sasl_stats($attrs) {
         mq("INSERT INTO saslstat SET address_id=".$addrid.", rcptcount=".intval($attrs["recipient_count"]).", ip='".addslashes($attrs["client_address"])."';");
     }
     // at RCPT AND DATA time, we block :
-    if (!in_array($attrs["sasl_username"],$conf["whitelist"]) && is_it_blocked($addrid,$attrs["client_address"])) {
+    // auto reload whitelist if necessary
+    auto_reload_whitelist();
+    if (!in_array($attrs["sasl_username"],$whitelist) && is_it_blocked($addrid,$attrs["client_address"])) {
         return "521 Rejected";
     } else {
         return "OK";
     }
 
     return "OK";
+}
+
+
+/*
+ * reload the whitelist file if it has changed
+ * since last time
+ */
+function auto_reload_whitelist() {
+    global $whitelist,$whitelistfile;
+    static $whitelistts=0;
+    clearstatcache();
+    if (!file_exists($whitelistfile)) {
+        $whitelist=array();
+        $whitelistts=0;
+        return;
+    }
+    if (filemtime($whitelistfile)>$whitelistts) {
+        $whitelist=array();
+        $f=fopen($whitelistfile,"rb");
+        if ($f) {
+            while($s=fgets($f,1024)) {
+                $s=trim($s);
+                if (substr($s,0,1)=="#") continue;
+                $whitelist[]=$s;
+            }
+            fclose($f);
+        }
+        $whitelistts=filemtime($whitelistfile);
+        echo date("Y-m-d H:i:s")." reloaded whitelist file $whitelistfile (has now ".count($whitelist)." entries)\n";
+        return;
+    }
 }
 
 
@@ -210,7 +246,7 @@ function block($addrid,$msg) {
     global $addrcache,$conf;
     $email = array_search($addrid,$addrcache);
     echo date("Y-m-d H:i:s")." EMAIL $email BLOCKED with msg : $msg\n";
-    mq("UPDATE address SET enabled=0 WHERE id=".intval($addrid).";");
+    mq("UPDATE address SET password=concat('*',password) WHERE id=".intval($addrid).";");
     $fields=array(
         "HOSTNAME"=>gethostname(),
         "EMAIL" => $email,
@@ -300,5 +336,5 @@ function mail_tpl($from, $to, $mailfile, $fields) {
         $subject=str_replace("%%".$k."%%",$v,$subject);
         $text=str_replace("%%".$k."%%",$v,$text);
     }
-    return mail($to,$subject,$text,"From: $from\nReply-to: $from\nReturn-Path: $from\n");
+    return mail($to,$subject,$text,"Content-Type: text/plain; charset=\"utf-8\"\nFrom: $from\nReply-to: $from\nReturn-Path: $from\n");
 }
