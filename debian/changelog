@@ -1,4 +1,4 @@
-alternc-smtpshaper (1.0~rc2) stable; urgency=low
+alternc-smtpshaper (1.0~rc3) stable; urgency=low
 
   * adding content-type charset in email (utf-8)
   * changing password instead of disabling email completely
