@@ -142,6 +142,10 @@ function sasl_stats($attrs) {
     if ($attrs["request"]!="smtpd_access_policy") {
         return "DUNNO";
     }
+    if (!isset($attrs["sasl_username"]) || !$attrs["sasl_username"]) {
+        echo date("Y-m-d H:i:s")." email without sasl_username, OK\n";
+        return "OK";
+    }
     if (!isset($addrcache[$attrs["sasl_username"]])) {
         $addrcache[$attrs["sasl_username"]]=get_address_by_name($attrs["sasl_username"]);
     }
