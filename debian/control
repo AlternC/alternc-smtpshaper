@@ -19,9 +19,9 @@ Description: Hosting management suite, SMTP limiter
  web statistics, mailing-lists, jabber accounts, etc.
  .
  This module for AlternC limits the number of emails / IP
- that a single account can send thtough the SMTP server.
+ that a single account can send through the SMTP server.
  if an account goes above the limit, it's disabled,
  an email is sent to the admin of the account.
  .
- More information at http://www.alternc.com/
-Homepage: http://www.alternc.com/
+ More information at https://www.alternc.com/
+Homepage: https://www.alternc.com/
