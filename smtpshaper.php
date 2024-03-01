@@ -29,6 +29,8 @@ $conf=array(
 	"mail_bcc"=> array(  ),
     // those are not subject to shaping:
     "whitelist" => array( ),
+    // the IP blocs below (IPv6 currently not supported) are considered as 1 single IP address (eg: google for 209.85.128.0/17)
+    "singleip" => array( "209.85.128.0/17" ),
 );
 
 
@@ -138,6 +140,9 @@ while (true) {
  */
 function sasl_stats($attrs) {
     global $addrcache,$conf,$whitelist;
+
+    // change the client address if it's inside one of the singleip blocs
+    $attrs["client_address"]=simplify_ip($attrs["client_address"]);
     
     if ($attrs["request"]!="smtpd_access_policy") {
         return "DUNNO";
@@ -341,4 +346,21 @@ function mail_tpl($from, $to, $mailfile, $fields) {
         $text=str_replace("%%".$k."%%",$v,$text);
     }
     return mail($to,$subject,$text,"Content-Type: text/plain; charset=\"utf-8\"\nFrom: $from\nReply-to: $from\nReturn-Path: $from\n");
+}
+
+function simplify_ip($ip) {
+    global $conf;
+    if (!filter_var($ip,FILTER_VALIDATE_IP,FILTER_FLAG_IPV4)) return $ip; // no change for non-ipv4 IP addresses
+    $ip=ip2long($ip);
+    foreach($conf["singleip"] as $bloc) {
+        // if this is a proper ip/prefix bloc, we compute its start and end IP address as a long : 
+        if (preg_match('#^([0-9\.]+)/([0-9]+)$#',$bloc,$mat)) {
+            $start=ip2long($mat[1]);
+            $end=ip2long($mat[1])+(1<<(32-$mat[2]))-1;
+        } else {
+            continue;
+        }
+        if ($ip<=$end && $ip>=$start) $ip=$start;
+    }
+    return long2ip($ip);
 }
