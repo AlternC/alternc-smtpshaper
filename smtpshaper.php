@@ -283,7 +283,11 @@ function mq($query) {
     global $db;
     if (!$db) mq_connect();
     if (!$db) return false;
-    $res = mysqli_query($db,$query);
+    try {
+        $res = mysqli_query($db,$query);
+    } catch (Exception $e) {
+        // no need to manage it here: on some servers it's not throwing an exception anyway :/ 
+    }
     // in case of "mysql server has gone away", try to reconnect (once)
     if (mysqli_errno($db)==2006) {
         // reconnect once 

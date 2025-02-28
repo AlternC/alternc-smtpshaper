@@ -1,7 +1,13 @@
+alternc-smtpshaper (1.1~rc3) buster bullseye bookworm; urgency=low
+
+  * fix: working on some weird servers (php8.2?) where mysqli_query could throw an exception
+
+ -- Benjamin Sonntag <benjamin@sonntag.fr>  Fri, 28 Feb 2025 11:54:12 +0100
+
 alternc-smtpshaper (1.1~rc2) buster bullseye bookworm; urgency=low
 
   * integrate in deb-builder processing
-  * should be work on all recent debian release
+  * should work on all recent debian release
 
  -- Camille Lafitte <alternc@webelys.com>  Fri, 18 Oct 2024 09:30:00 +0020
 
