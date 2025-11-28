@@ -19,5 +19,15 @@ The email message sent to the user can be changed in /etc/alternc/smtpshaper.*.t
 
 This package is distributed as a debian package at https://debian.alternc.org
 
+## Get package
+
+### Official Alternc repository
+
+To get latest version we recommand to use Alternc repository at https://debian.alternc.org/ and follow instructions.
+
+### Github
+
+You can also retrieve package from release as we should tag all versions at https://github.com/AlternC/alternc-smtpshaper/releases
+
 License: GPLv3+ (C) AlternC Team 2018-2019
 
