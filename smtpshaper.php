@@ -332,6 +332,7 @@ function mq_connect() {
     fclose($config_file);
     $db = mysqli_connect($L_MYSQL_HOST, $L_MYSQL_LOGIN, $L_MYSQL_PWD);
     if (!$db) return false;
+    mysqli_report($db,MYSQLI_REPORT_OFF);
     return mysqli_select_db($db,$L_MYSQL_DATABASE);
 }
 
