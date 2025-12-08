@@ -3,3 +3,4 @@ debian/.debhelper/
 debian/alternc-smtpshaper.debhelper.log
 debian/alternc-smtpshaper.substvars
 debian/alternc-smtpshaper/
+debian/source/
