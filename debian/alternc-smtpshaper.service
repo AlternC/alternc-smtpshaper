@@ -1,0 +1,27 @@
+[Unit]
+Description=AlternC smtpshaper
+# Start after network is enabled
+After=network.target
+
+[Service]
+User=alterncpanel
+Group=alterncpanel
+
+# Chemin vers le répertoire de travail de l'application
+WorkingDirectory=/
+
+# smtpshaper to run
+ExecStart=/usr/lib/alternc/smtpshaper.php
+
+# Took in consideration an exit standard (SIGTERM = 143)
+# Prevent conflict with 'systemctl stop'
+SuccessExitStatus=143
+
+# Restart on failure
+Restart=on-failure
+# Wait 5 seconds
+RestartSec=5
+
+[Install]
+# Must be stard on boot 
+WantedBy=multi-user.target
