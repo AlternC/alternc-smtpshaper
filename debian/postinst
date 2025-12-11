@@ -2,6 +2,10 @@
 
 case "$1" in
   configure)
+    echo "clear old supervisord configuration"
+    if [ -e  /etc/supervisor/conf.d/smtpshaper.conf ]; then
+        rm /etc/supervisor/conf.d/smtpshaper.conf
+    fi
     echo "Installing smtpshaper sql DB"
     mysql --defaults-file=/etc/alternc/my.cnf < /etc/alternc/smtpshaper.sql
     echo "Setting up postfix for smtpshaper using postconf"
