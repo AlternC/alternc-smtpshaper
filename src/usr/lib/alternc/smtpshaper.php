@@ -346,7 +346,7 @@ function mail_tpl($from, $to, $mailfile, $fields) {
     $text="";
     while($s=fgets($f,1024)) $text.=$s;
     reset($fields);
-    while (list($k,$v)=each($fields)) {
+    foreach($fields as $k=>$v) {
         $subject=str_replace("%%".$k."%%",$v,$subject);
         $text=str_replace("%%".$k."%%",$v,$text);
     }
