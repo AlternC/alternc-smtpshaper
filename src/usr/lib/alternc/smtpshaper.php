@@ -113,7 +113,7 @@ while (true) {
             echo date("Y-m-d H:i:s")." client $clientid disconnected.\n";
             continue;
         }
-        $data = trim($data);
+        $data = trim($data,"\f\n\r\t\v\x00");
         if (!empty($data)) {
             // add the attribute
             if (preg_match('#^([^=]*)=(.*)$#',$data,$mat)) {
@@ -196,7 +196,7 @@ function auto_reload_whitelist() {
         $f=fopen($whitelistfile,"rb");
         if ($f) {
             while($s=fgets($f,1024)) {
-                $s=trim($s);
+                $s=trim($s,"\f\n\r\t\v\x00");
                 if (substr($s,0,1)=="#") continue;
                 $whitelist[]=$s;
             }
@@ -311,7 +311,7 @@ function mq_connect() {
     // use AlternC's configuration:
     $config_file = fopen('/etc/alternc/my.cnf', 'r');
     while (false!== ($line = fgets($config_file))) {
-        if (preg_match('/^([A-Za-z0-9_]*) *= *"?(.*?)"?$/', trim($line), $regs)) {
+        if (preg_match('/^([A-Za-z0-9_]*) *= *"?(.*?)"?$/', trim($line,"\f\n\r\t\v\x00"), $regs)) {
             switch ($regs[1]) {
             case "user":
                 $L_MYSQL_LOGIN = $regs[2];
@@ -342,11 +342,11 @@ function mq_connect() {
  */
 function mail_tpl($from, $to, $mailfile, $fields) {
     $f=fopen($mailfile,"rb");
-    $subject=trim(fgets($f,1024));
+    $subject=trim(fgets($f,1024),"\f\n\r\t\v\x00");
     $text="";
     while($s=fgets($f,1024)) $text.=$s;
     reset($fields);
-    while (list($k,$v)=each($fields)) {
+    foreach($fields as $k=>$v) {
         $subject=str_replace("%%".$k."%%",$v,$subject);
         $text=str_replace("%%".$k."%%",$v,$text);
     }
