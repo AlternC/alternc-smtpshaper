@@ -19,6 +19,15 @@ The email message sent to the user can be changed in /etc/alternc/smtpshaper.*.t
 
 This package is distributed as a debian package at https://debian.alternc.org
 
+## PHP compatibilty
+
+AlternC-smtpshapper must support PGP version from 5.6 to the latest version. To check compatibility run :
+
+```bash
+composer install
+vendor/bin/phpcs -p .
+```
+
 ## Get package
 
 ### Official Alternc repository
