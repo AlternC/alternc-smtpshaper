@@ -1,3 +1,9 @@
+alternc-smtpshaper (1.2.1) buster bullseye bookworm; urgency=low
+
+  * fix: support from php 5.6 to latest version fix #12.
+
+ -- Camille Lafitte <alternc@webelys.com>  Wed, 14 Oct 2026 10:25:15 +0200
+
 alternc-smtpshaper (1.2.0) buster bullseye bookworm; urgency=low
 
   * fix: disable mysql report of errors from PHP8.1+.
