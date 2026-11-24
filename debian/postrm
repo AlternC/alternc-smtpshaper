@@ -3,7 +3,9 @@
 case "$1" in
   purge)
     mysql --defaults-file=/etc/alternc/my.cnf -e "DROP TABLE saslstats"
-    supervisorctl update smtpshaper
+    if [[ ! -f /etc/supervisor/conf.d/smtpshaper.conf ]]; then
+        supervisorctl update smtpshaper
+    fi
     ;;
 esac
 
