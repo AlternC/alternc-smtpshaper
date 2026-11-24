@@ -22,6 +22,27 @@ Restart=on-failure
 # Wait 5 seconds
 RestartSec=5
 
+## Hardening standard services
+## systemd-analyze security
+## Default provided by https://wiki.debian.org/ServiceSandboxing
+DevicePolicy=closed
+LockPersonality=true
+MemoryDenyWriteExecute=true
+NoNewPrivileges=yes
+PrivateDevices=true
+PrivateTmp=yes
+ProtectClock=true
+ProtectControlGroups=true
+ProtectHome=read-only
+ProtectHostname=true
+ProtectKernelLogs=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectProc=invisible
+ProtectSystem=full
+RestrictRealtime=true
+RestrictSUIDSGID=true
+
 [Install]
 # Must be stard on boot 
 WantedBy=multi-user.target
