@@ -21,7 +21,7 @@ This package is distributed as a debian package at https://debian.alternc.org
 
 ## PHP compatibilty
 
-AlternC-smtpshapper must support PGP version from 5.6 to the latest version. To check compatibility run :
+AlternC-smtpshapper must support PHP version from 5.6 to the latest version. To check compatibility run :
 
 ```bash
 composer install
@@ -30,7 +30,7 @@ vendor/bin/phpcs -p .
 
 ## Get package
 
-### Official Alternc repository
+### Official AlternC repository
 
 To get latest version we recommand to use Alternc repository at https://debian.alternc.org/ and follow instructions.
 
