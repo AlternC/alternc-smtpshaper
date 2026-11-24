@@ -25,10 +25,11 @@ RestartSec=5
 ## Hardening standard services
 ## systemd-analyze security
 ## Default provided by https://wiki.debian.org/ServiceSandboxing
+
+# 0. Default sandboxing
 DevicePolicy=closed
 LockPersonality=true
 MemoryDenyWriteExecute=true
-NoNewPrivileges=yes
 PrivateDevices=true
 PrivateTmp=yes
 ProtectClock=true
@@ -39,9 +40,36 @@ ProtectKernelLogs=true
 ProtectKernelModules=true
 ProtectKernelTunables=true
 ProtectProc=invisible
-ProtectSystem=full
 RestrictRealtime=true
 RestrictSUIDSGID=true
+# 1. Remove capability (as non-root process est non-root, il n'en a besoin d'aucune)
+CapabilityBoundingSet=
+AmbientCapabilities=
+NoNewPrivileges=yes
+
+# 2. Adresses Families : script run localy (socket and localhost)
+# ad defined via socket_create() method
+# IPv6 is not supported
+RestrictAddressFamilies=AF_UNIX AF_INET
+
+# 3. No name space
+RestrictNamespaces=yes
+
+# 4. Architecture unique
+SystemCallArchitectures=native
+
+# 5. System call filter, use default value
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM
+
+# 6. Restrict read/write access
+ProtectSystem=strict
+ReadWritePaths=/etc/alternc/ /usr/lib/alternc/
+
+# 7. Umask restricted to alterncpanel
+UMask=0077
+
+## Hardening standard services
 
 [Install]
 # Must be stard on boot 
