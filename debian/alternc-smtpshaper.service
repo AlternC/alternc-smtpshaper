@@ -1,0 +1,76 @@
+[Unit]
+Description=AlternC smtpshaper
+# Start after network is enabled
+After=network.target
+
+[Service]
+User=alterncpanel
+Group=alterncpanel
+
+# Chemin vers le répertoire de travail de l'application
+WorkingDirectory=/
+
+# smtpshaper to run
+ExecStart=/usr/lib/alternc/smtpshaper.php
+
+# Took in consideration an exit standard (SIGTERM = 143)
+# Prevent conflict with 'systemctl stop'
+SuccessExitStatus=143
+
+# Restart on failure
+Restart=on-failure
+# Wait 5 seconds
+RestartSec=5
+
+## Hardening standard services
+## systemd-analyze security
+## Default provided by https://wiki.debian.org/ServiceSandboxing
+
+# 0. Default sandboxing
+DevicePolicy=closed
+LockPersonality=true
+MemoryDenyWriteExecute=true
+PrivateDevices=true
+PrivateTmp=yes
+ProtectClock=true
+ProtectControlGroups=true
+ProtectHome=read-only
+ProtectHostname=true
+ProtectKernelLogs=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectProc=invisible
+RestrictRealtime=true
+RestrictSUIDSGID=true
+# 1. Remove capability (as non-root process est non-root, il n'en a besoin d'aucune)
+CapabilityBoundingSet=
+AmbientCapabilities=
+NoNewPrivileges=yes
+
+# 2. Adresses Families : script run localy (socket and localhost)
+# ad defined via socket_create() method
+# IPv6 is not supported
+RestrictAddressFamilies=AF_UNIX AF_INET
+
+# 3. No name space
+RestrictNamespaces=yes
+
+# 4. Architecture unique
+SystemCallArchitectures=native
+
+# 5. System call filter, use default value
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM
+
+# 6. Restrict read/write access
+ProtectSystem=strict
+ReadWritePaths=/etc/alternc/ /usr/lib/alternc/
+
+# 7. Umask restricted to alterncpanel
+UMask=0077
+
+## Hardening standard services
+
+[Install]
+# Must be stard on boot 
+WantedBy=multi-user.target

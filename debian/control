@@ -2,14 +2,14 @@ Source: alternc-smtpshaper
 Section: admin
 Priority: optional
 Maintainer: Benjamin Sonntag <benjamin@sonntag.fr>
-Build-Depends: debhelper (>= 9)
+Build-Depends: debhelper (>= 12)
 Standards-Version: 3.9.8
 
 Package: alternc-smtpshaper
 Architecture: all
 Pre-depends: alternc (>= 3.1.8) 
-Depends: bash (>= 4)
- 	 , supervisor
+Depends: bash (>= 4),
+         , systemd
          , php8.2-cli | php5.6-cli | php-cli (<< 8.3~)
          , ${misc:Depends}
 Recommends: postfix
